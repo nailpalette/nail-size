@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NailMeasure AI | Smart Nail Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f9f7fe 0%, #e3f2fd 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .app-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .results-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            background: #6a11cb;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .upload-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .upload-option {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px dashed #dce1f9;
+        }
+
+        .upload-option:hover {
+            background: #eef1ff;
+            transform: translateY(-3px);
+        }
+
+        .upload-option.active {
+            background: #e3e7ff;
+            border-color: #6a11cb;
+        }
+
+        .upload-option i {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+
+        .camera-container {
+            margin-top: 20px;
+        }
+
+        #cameraPreview {
+            width: 100%;
+            border-radius: 10px;
+            background: #333;
+            aspect-ratio: 4/3;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: #f0f4ff;
+            color: #6a11cb;
+            border: 1px solid #d0d8ff;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.2);
+        }
+
+        .file-upload {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 30px;
+            border: 2px dashed #dce1f9;
+            border-radius: 12px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-label:hover {
+            background: #eef1ff;
+            border-color: #6a11cb;
+        }
+
+        .file-upload-label i {
+            font-size: 3rem;
+            color: #6a11cb;
+            margin-bottom: 15px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .preview-container {
+            margin-top: 25px;
+            display: none;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        #imagePreview {
+            width: 100%;
+            border-radius: 10px;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            display: none;
+        }
+
+        .measure-btn {
+            margin-top: 25px;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        .processing-container {
+            text-align: center;
+            padding: 30px 0;
+            display: none;
+        }
+
+        .spinner {
+            border: 5px solid rgba(37, 117, 252, 0.2);
+            border-top: 5px solid #2575fc;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 25px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-container {
+            flex: 1;
+            display: none;
+        }
+
+        .result-card {
+            background: #f0f7ff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2575fc;
+        }
+
+        .result-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-card h3 i {
+            color: #6a11cb;
+        }
+
+        .measurement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .measurement-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .measurement-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2575fc;
+            margin: 10px 0;
+        }
+
+        .recommendation-list {
+            padding-left: 20px;
+        }
+
+        .recommendation-list li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .restart-btn {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .visualization {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .nail-diagram {
+            position: relative;
+            height: 200px;
+            margin: 30px 0;
+        }
+
+        .finger {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .finger-line {
+            width: 30px;
+            height: 80px;
+            background: #ffd6d6;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .finger-nail {
+            width: 35px;
+            height: 25px;
+            background: #ffefef;
+            border-radius: 5px 5px 15px 15px;
+            position: absolute;
+            top: -5px;
+            border: 2px solid #ffb3b3;
+        }
+
+        .finger-label {
+            margin-top: 10px;
+            font-weight: 600;
+            color: #6a11cb;
+        }
+
+        .measure-line {
+            position: absolute;
+            height: 2px;
+            background: #2575fc;
+            transform-origin: left center;
+        }
+
+        .measure-label {
+            position: absolute;
+            background: #2575fc;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .upload-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-fingerprint"></i> NailMeasure AI</h1>
+            <p>Take a photo of your nails and our AI will measure and analyze them instantly</p>
+        </header>
+
+        <div class="app-container">
+            <div class="upload-section">
+                <h2 class="section-title"><i class="fas fa-camera"></i> Capture Nail Photo</h2>
+                
+                <div class="upload-options">
+                    <div class="upload-option active" id="cameraOption">
+                        <i class="fas fa-camera"></i>
+                        <h3>Take Photo</h3>
+                        <p>Use your camera</p>
+                    </div>
+                    <div class="upload-option" id="uploadOption">
+                        <i class="fas fa-file-upload"></i>
+                        <h3>Upload Photo</h3>
+                        <p>From your device</p>
+                    </div>
+                </div>
+                
+                <div class="camera-container" id="cameraContainer">
+                    <div id="cameraPreview">
+                        <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white; flex-direction: column;">
+                            <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                            <p>Camera will activate when you click "Start Camera"</p>
+                        </div>
+                    </div>
+                    <div class="camera-controls">
+                        <button class="btn btn-secondary" id="startCamera">
+                            <i class="fas fa-play"></i> Start Camera
+                        </button>
+                        <button class="btn btn-primary" id="captureBtn" disabled>
+                            <i class="fas fa-camera"></i> Capture Photo
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="file-upload" id="fileUploadContainer">
+                    <label class="file-upload-label" for="fileInput">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Select Nail Photo</h3>
+                        <p>Click to browse or drag & drop</p>
+                        <p>JPG, PNG or WebP (Max 5MB)</p>
+                    </label>
+                    <input type="file" id="fileInput" accept="image/*">
+                </div>
+                
+                <div class="preview-container" id="previewContainer">
+                    <h4 class="preview-title">Photo Preview</h4>
+                    <img id="imagePreview" alt="Nail preview">
+                </div>
+                
+                <button class="btn btn-primary measure-btn" id="measureBtn">
+                    <i class="fas fa-ruler-combined"></i> Measure My Nails
+                </button>
+                
+                <div class="processing-container" id="processingContainer">
+                    <div class="spinner"></div>
+                    <h3>Analyzing your nails with AI</h3>
+                    <p>Measuring dimensions and analyzing nail health...</p>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="section-title"><i class="fas fa-chart-line"></i> Analysis Results</h2>
+                
+                <div class="results-container" id="resultsContainer">
+                    <div class="visualization">
+                        <h3><i class="fas fa-ruler-combined"></i> Nail Measurement Visualization</h3>
+                        <div class="nail-diagram">
+                            <!-- Fingers will be positioned here by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3><i class="fas fa-ruler"></i> Nail Measurements</h3>
+                        <p>Based on the photo analysis, here are your nail measurements:</p>
+                        
+                        <div class="measurement-grid">
+                            <div class="measurement-item">
+                                <div>Thumb Length</div>
+                                <div class="measurement-value">12.3mm</div>
+                            </div>
+                            <div class="measurement-item">
+                                <div>Index Length</div>
+                                <div class="measurement-value">14.2mm</div>
+                            </div>
+                            <div class="measurement-item">
+                                <div>Middle Length</div>
+                                <div class="measurement-value">15.1mm</div>
+                            </div>
+                            <div class="measurement-item">
+                                <div>Ring Length</div>
+                                <div class="measurement-value">14.5mm</div>
+                            </div>
+                            <div class="measurement-item">
+                                <div>Pinky Length</div>
+                                <div class="measurement-value">10.8mm</div>
+                            </div>
+                            <div class="measurement-item">
+                                <div>Average Width</div>
+                                <div class="measurement-value">9.2mm</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3><i class="fas fa-heart"></i> Nail Health Assessment</h3>
+                        <p>Our AI has analyzed your nail health:</p>
+                        <ul class="recommendation-list">
+                            <li><strong>Strength:</strong> Moderate (Slight ridges detected)</li>
+                            <li><strong>Hydration:</strong> Good (Minimal cuticle dryness)</li>
+                            <li><strong>Growth Rate:</strong> Average (3mm/month)</li>
+                            <li><strong>Potential Concerns:</strong> Minor splitting on thumb nail</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3><i class="fas fa-lightbulb"></i> Personalized Recommendations</h3>
+                        <p>Based on your measurements and nail health:</p>
+                        <ul class="recommendation-list">
+                            <li><strong>Ideal nail shape:</strong> Almond shape would complement your finger proportions</li>
+                            <li><strong>Care routine:</strong> Apply cuticle oil daily and use strengthening base coat</li>
+                            <li><strong>Product recommendations:</strong> Strengthening nail serum and hydrating hand cream</li>
+                            <li><strong>Professional advice:</strong> Schedule a manicure in 2 weeks to maintain shape</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="btn btn-primary restart-btn" id="restartBtn">
+                        <i class="fas fa-redo"></i> Analyze Another Set of Nails
+                    </button>
+                </div>
+                
+                <div class="processing-container" id="resultsPlaceholder">
+                    <i class="fas fa-ruler-combined" style="font-size: 3rem; color: #6a11cb; margin-bottom: 20px;"></i>
+                    <h3>Your Analysis Will Appear Here</h3>
+                    <p>Take or upload a photo of your nails to get detailed measurements and personalized recommendations</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 NailMeasure AI | Powered by DeepSeek AI Technology</p>
+            <p>All measurements are estimates. For professional diagnosis, consult a nail technician.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const cameraOption = document.getElementById('cameraOption');
+        const uploadOption = document.getElementById('uploadOption');
+        const cameraContainer = document.getElementById('cameraContainer');
+        const fileUploadContainer = document.getElementById('fileUploadContainer');
+        const cameraPreview = document.getElementById('cameraPreview');
+        const startCameraBtn = document.getElementById('startCamera');
+        const captureBtn = document.getElementById('captureBtn');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const measureBtn = document.getElementById('measureBtn');
+        const processingContainer = document.getElementById('processingContainer');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultsPlaceholder = document.getElementById('resultsPlaceholder');
+        const restartBtn = document.getElementById('restartBtn');
+        
+        // Initialize the app
+        function init() {
+            // Event listeners
+            cameraOption.addEventListener('click', showCamera);
+            uploadOption.addEventListener('click', showFileUpload);
+            startCameraBtn.addEventListener('click', startCamera);
+            captureBtn.addEventListener('click', capturePhoto);
+            fileInput.addEventListener('change', handleFileUpload);
+            measureBtn.addEventListener('click', processMeasurement);
+            restartBtn.addEventListener('click', restartProcess);
+            
+            // Draw nail visualization
+            drawNailVisualization();
+        }
+        
+        // Show camera interface
+        function showCamera() {
+            cameraOption.classList.add('active');
+            uploadOption.classList.remove('active');
+            fileUploadContainer.style.display = 'none';
+            cameraContainer.style.display = 'block';
+            previewContainer.style.display = 'none';
+            measureBtn.style.display = 'none';
+        }
+        
+        // Show file upload interface
+        function showFileUpload() {
+            uploadOption.classList.add('active');
+            cameraOption.classList.remove('active');
+            cameraContainer.style.display = 'none';
+            fileUploadContainer.style.display = 'block';
+            previewContainer.style.display = 'none';
+            measureBtn.style.display = 'none';
+        }
+        
+        // Start camera simulation
+        function startCamera() {
+            cameraPreview.innerHTML = `
+                <div style="position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 10px;">
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;"></div>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                        <i class="fas fa-hand" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3>Position your hand in the frame</h3>
+                        <p>Make sure nails are clearly visible</p>
+                    </div>
+                </div>
+            `;
+            startCameraBtn.textContent = "Switch Camera";
+            startCameraBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Switch Camera';
+            captureBtn.disabled = false;
+        }
+        
+        // Capture photo from camera
+        function capturePhoto() {
+            imagePreview.src = "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+            showPreview();
+        }
+        
+        // Handle file upload
+        function handleFileUpload(e) {
+            if (e.target.files && e.target.files[0]) {
+                const file = e.target.files[0];
+                
+                // Simple validation
+                if (!file.type.match('image.*')) {
+                    alert('Please select an image file');
+                    return;
+                }
+                
+                // For this demo, we'll use a placeholder image
+                imagePreview.src = "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+                showPreview();
+            }
+        }
+        
+        // Show image preview
+        function showPreview() {
+            previewContainer.style.display = 'block';
+            imagePreview.style.display = 'block';
+            measureBtn.style.display = 'block';
+        }
+        
+        // Process measurement
+        function processMeasurement() {
+            // Show processing UI
+            measureBtn.style.display = 'none';
+            processingContainer.style.display = 'block';
+            
+            // Simulate AI processing time
+            setTimeout(() => {
+                processingContainer.style.display = 'none';
+                resultsContainer.style.display = 'block';
+                resultsPlaceholder.style.display = 'none';
+                
+                // Draw visualization
+                drawNailVisualization();
+                
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }, 3000);
+        }
+        
+        // Draw nail visualization
+        function drawNailVisualization() {
+            const diagram = document.querySelector('.nail-diagram');
+            diagram.innerHTML = '';
+            
+            const fingers = [
+                { name: "Thumb", top: 60, left: 20, length: 70, width: 30 },
+                { name: "Index", top: 30, left: 90, length: 90, width: 28 },
+                { name: "Middle", top: 20, left: 160, length: 100, width: 30 },
+                { name: "Ring", top: 30, left: 230, length: 90, width: 26 },
+                { name: "Pinky", top: 50, left: 300, length: 70, width: 22 }
+            ];
+            
+            fingers.forEach(finger => {
+                const fingerDiv = document.createElement('div');
+                fingerDiv.className = 'finger';
+                fingerDiv.style.left = `${finger.left}px`;
+                fingerDiv.style.top = `${finger.top}px`;
+                
+                fingerDiv.innerHTML = `
+                    <div class="finger-line" style="height: ${finger.length}px; width: ${finger.width}px;">
+                        <div class="finger-nail" style="width: ${finger.width + 5}px;"></div>
+                    </div>
+                    <div class="finger-label">${finger.name}</div>
+                `;
+                
+                diagram.appendChild(fingerDiv);
+                
+                // Add measurement lines
+                const measureLine = document.createElement('div');
+                measureLine.className = 'measure-line';
+                measureLine.style.width = `${finger.width}px`;
+                measureLine.style.left = `${finger.left}px`;
+                measureLine.style.top = `${finger.top - 10}px`;
+                measureLine.style.transform = 'rotate(0deg)';
+                
+                const measureLabel = document.createElement('div');
+                measureLabel.className = 'measure-label';
+                measureLabel.textContent = `${finger.width}px width`;
+                measureLabel.style.left = `${finger.left}px`;
+                measureLabel.style.top = `${finger.top - 35}px`;
+                
+                diagram.appendChild(measureLine);
+                diagram.appendChild(measureLabel);
+                
+                // Add length measurement
+                const lengthLine = document.createElement('div');
+                lengthLine.className = 'measure-line';
+                lengthLine.style.width = `${finger.length}px`;
+                lengthLine.style.left = `${finger.left + finger.width + 10}px`;
+                lengthLine.style.top = `${finger.top + 15}px`;
+                lengthLine.style.transform = 'rotate(90deg)';
+                
+                const lengthLabel = document.createElement('div');
+                lengthLabel.className = 'measure-label';
+                lengthLabel.textContent = `${finger.length}px length`;
+                lengthLabel.style.left = `${finger.left + finger.width + 35}px`;
+                lengthLabel.style.top = `${finger.top + finger.length/2}px`;
+                
+                diagram.appendChild(lengthLine);
+                diagram.appendChild(lengthLabel);
+            });
+        }
+        
+        // Restart the process
+        function restartProcess() {
+            // Reset UI
+            resultsContainer.style.display = 'none';
+            resultsPlaceholder.style.display = 'block';
+            previewContainer.style.display = 'none';
+            imagePreview.style.display = 'none';
+            imagePreview.src = '';
+            fileInput.value = '';
+            
+            // Reset camera
+            cameraPreview.innerHTML = `
+                <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white; flex-direction: column;">
+                    <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <p>Camera will activate when you click "Start Camera"</p>
+                </div>
+            `;
+            startCameraBtn.textContent = "Start Camera";
+            startCameraBtn.innerHTML = '<i class="fas fa-play"></i> Start Camera';
+            captureBtn.disabled = true;
+            
+            showCamera();
+        }
+        
+        // Initialize the app when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
